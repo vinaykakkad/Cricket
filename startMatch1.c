@@ -14,24 +14,29 @@ void startMatch()
     system("color 03");
     
     printf("\nEnter the name of the first team: ");
-    scanf("%s",newMatch.battingTeam.name);
+    fflush(stdin);
+    scanf("%[^\n]s",newMatch.battingTeam.name);
     printf("Enter the name of the second team: ");
-    scanf("%s",newMatch.bowlingTeam.name);
+    fflush(stdin);
+    scanf("%[^\n]s",newMatch.bowlingTeam.name);
     printf("Enter the venue of the match: ");
-    scanf("%s",newMatch.venue);
-    printf("Enter the date of the match: ");
-    scanf("%d %d %d",&newMatch.match_date.d,&newMatch.match_date.m,&newMatch.match_date.y);
+    fflush(stdin);
+    scanf("%[^\n]s",newMatch.venue);
+    printf("Enter the date of the match(dd/mm/yy): ");
+    fflush(stdin);
+    scanf("%d/%d/%d",&newMatch.match_date.d,&newMatch.match_date.m,&newMatch.match_date.y);
     printf("Enter the number of overs: ");
+    fflush(stdin);
     scanf("%d",&newMatch.overs);
 
     system("cls");
 
-    printf("\nEnter team %s:\n\n",newMatch.battingTeam.name);
+    printf("\nEnter team %s\n\n",newMatch.battingTeam.name);
     for(i=0;i<11;i++)
     {
         printf("%-2d: ",i+1);
         fflush(stdin);
-        scanf("%s",newMatch.battingTeam.players[i].name);
+        scanf("%[^\n]s",newMatch.battingTeam.players[i].name);
         newMatch.battingTeam.players[i].out=0;
         newMatch.battingTeam.players[i].batRuns=0;
         newMatch.battingTeam.players[i].batBalls=0;
@@ -46,13 +51,13 @@ void startMatch()
         strcpy((newMatch.battingTeam.players[i].outType),"not out");
     }
     
-    printf("\nEnter team %s:\n\n",newMatch.bowlingTeam.name);
+    printf("\nEnter team %s\n\n",newMatch.bowlingTeam.name);
     
     for(i=0;i<11;i++)
     {
         printf("%-2d: ",i+1);
         fflush(stdin);
-        scanf("%s",newMatch.bowlingTeam.players[i].name);
+        scanf("%[^\n]s",newMatch.bowlingTeam.players[i].name);
         newMatch.bowlingTeam.players[i].out=0;
         newMatch.bowlingTeam.players[i].batRuns=0;
         newMatch.bowlingTeam.players[i].batBalls=0;
@@ -139,16 +144,20 @@ void editTeam(match *newMatch)
         {
             case 1:
                 printf("\nEnter the number of the player that you want to edit: ");
+                fflush(stdin);
                 scanf("%d",&no);
                 printf("Enter the name of new player: ");
-                scanf("%s",newPlayer);
+                fflush(stdin);
+                scanf("%[^\n]s",newPlayer);
                 strcpy(newMatch->battingTeam.players[no-1].name,newPlayer);
                 break;
             case 2:
                 printf("\nEnter the number of the player that you want to edit: ");
+                fflush(stdin);
                 scanf("%d",&no);
                 printf("Enter the name of new player: ");
-                scanf("%s",newPlayer);
+                fflush(stdin);
+                scanf("%[^\n]s",newPlayer);
                 strcpy(newMatch->bowlingTeam.players[no-1].name,newPlayer);
                 break;
             default:
@@ -193,8 +202,10 @@ void toss(match *newMatch)
     system("color 03");
 
     printf("\nEnter the winner of the toss(%s/%s): ",newMatch->battingTeam,newMatch->bowlingTeam);
-    scanf("%s",newMatch->toss);    
+    fflush(stdin);
+    scanf("%[^\n]s",newMatch->toss);    
     printf("Enter their decesion(bat/field): ");
+    fflush(stdin);
     scanf("%s",newMatch->decision);
 
     if(strcmp(newMatch->battingTeam.name,newMatch->toss)==0 && strcmp(newMatch->decision,"bat")==0)
@@ -384,7 +395,7 @@ void Scorecard(match *newMatch)
     
     printf("***********************************************************\n");
     printf("\n***********************************************************\n");
-    printf("\n***********************************************************\n\n");
+    printf("***********************************************************\n\n");
 }
     
 void startScoring(match *newMatch)
@@ -397,8 +408,8 @@ void startScoring(match *newMatch)
     char nameBowler[30]="";
 
     printf("\n\nEnter the name of the opening batsmen(ON STRIKE): ");
-    scanf("%s",nameOnstrike);
     fflush(stdin);
+    scanf("%[^\n]s",nameOnstrike);
         for(i=0;i<11;i++)
         {
             if(strcmp(nameOnstrike,(newMatch->battingTeam.players[i].name))==0)
@@ -411,8 +422,8 @@ void startScoring(match *newMatch)
         }
 
     printf("Enter the name of the opening batsmen(OFF STRIKE): ");
-    scanf("%s",nameOffstrike);
     fflush(stdin);
+    scanf("%[^\n]s",nameOffstrike);
         for(i=0;i<11;i++)
         {
             if(strcmp(nameOffstrike,(newMatch->battingTeam.players[i].name))==0)
@@ -425,8 +436,8 @@ void startScoring(match *newMatch)
         }
     
     printf("\nEnter the name of the opening bowler: ");
-    scanf("%s",nameBowler);
     fflush(stdin);
+    scanf("%[^\n]s",nameBowler);
         for(i=0;i<11;i++)
         {
             if(strcmp(nameBowler,(newMatch->bowlingTeam.players[i].name))==0)
@@ -465,6 +476,7 @@ void ball(match *newMatch)
         printf("\n");
         options();
         printf("\nEnter the code for last ball: ");
+        fflush(stdin);
         scanf("%s",response);
         fflush(stdin);
 
@@ -509,8 +521,8 @@ void ball(match *newMatch)
             else
             {
                 printf("You have entered wrong code!!!\nEnter again: ");
-                scanf("%s",response);
                 fflush(stdin);
+                scanf("%s",response);
             }
         }
         while (buff!=1);
@@ -584,6 +596,7 @@ void runs(match *newMatch)
 {
     int runs;
     printf("Enter the runs scored:");
+    fflush(stdin);
     scanf("%d",&runs);
 
     newMatch->onStrike->batBalls+=1;
@@ -617,6 +630,7 @@ void nb(match *newMatch)
     int runs;
 
     printf("Enter the runs scored off the bat: ");
+    fflush(stdin);
     scanf("%d",&runs);
 
     newMatch->onStrike->batRuns+=runs;
@@ -650,6 +664,7 @@ void wide(match *newMatch)
     int runs;
     
     printf("Enter the runs scored: ");
+    fflush(stdin);
     scanf("%d",&runs);
 
     newMatch->currentBowler->bowlRuns+=(runs+1);
@@ -671,6 +686,7 @@ void blb(match *newMatch)
     int runs;
 
     printf("Enter the runs scored: ");
+    fflush(stdin);
     scanf("%d",&runs);
 
     newMatch->onStrike->batBalls+=1;
@@ -694,8 +710,8 @@ void w(match *newMatch)
     char dismissal[10]="";
     char name[30]="";
     
-    fflush(stdin);
     printf("\nPress:\n 1. if the batsman was bowled\n 2. if the batsman was caught\n 3. if the batsman was stumped \n 4. if the batsman got runout\n\n");
+    fflush(stdin);
     scanf("%d",&r);
     fflush(stdin);
 
@@ -745,6 +761,7 @@ void w(match *newMatch)
             }
             default:
                 printf("You have entered wrong number!!!\nEnter again: ");
+                fflush(stdin);
                 scanf("%d",&r);
                 break;
         }
@@ -757,8 +774,8 @@ void runOut(match *newMatch)
     int r=0;
     char name[30]="";
 
-    fflush(stdin);
     printf("Press\n 1.This was a normal delivery\n 2.This was a no-ball\n 3.This was a wide\n 4.This was a bye\n 5.This was a leg-bye\n");
+    fflush(stdin);
     scanf("%d",&r);
     fflush(stdin);
 
@@ -793,13 +810,15 @@ void runOut(match *newMatch)
             }
             default:
                 printf("You have entered wrong number!!!\nEnter again: ");
+                fflush(stdin);
                 scanf("%d",&r);
                 break;
         }
     } while (r!=1 && r!=2 && r!=3 && r!=4 && r!=5);
 
     printf("Enter the name of the batsman who got runout: ");
-    scanf("%s",name);
+    fflush(stdin);
+    scanf("%[^\n]s",name);
     fflush(stdin);
 
     if(strcmp(name,(newMatch->onStrike->name))==0)
@@ -823,7 +842,8 @@ player* nextBatsman(player *new,match *newMatch)
     char name[30]="";
 
     printf("Enter the name of the next batsman: ");
-    scanf("%s",name);
+    fflush(stdin);
+    scanf("%[^\n]s",name);
     fflush(stdin);
 
     for(int i=0;i<11;i++)
@@ -840,7 +860,8 @@ player* nextBowler(match *newMatch)
     char name[30]="";
 
     printf("Enter the name of the next bowler: ");
-    scanf("%s",name);
+    fflush(stdin);
+    scanf("%[^\n]s",name);
     fflush(stdin);
 
     for(int i=0;i<11;i++)
