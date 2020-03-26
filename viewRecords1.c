@@ -50,7 +50,7 @@ int printList(char *teama,char *teamb,int *match_counter)
     while(!(feof(fp)))
     {
         
-        fscanf(fp,"%s %s %s %d %d %d",matchCode,scanTeama,scanTeamb,&scanDate.d,&scanDate.m,&scanDate.y);
+        fscanf(fp,"%s %s %s %d/%d/%d",matchCode,scanTeama,scanTeamb,&scanDate.d,&scanDate.m,&scanDate.y);
 
         if(((strcmp(teama,scanTeama)==0) && (strcmp(teamb,scanTeamb)==0)) || ((strcmp(teama,scanTeamb)==0) && (strcmp(teamb,scanTeama)==0)))
         {
@@ -62,8 +62,8 @@ int printList(char *teama,char *teamb,int *match_counter)
                 printf("\nMATCH CODE FIRST TEAM                     SECOND TEAM                   DATE\n\n");
             }
 
-            printf("%-10s %-30s %-30s %2d-%2d-%2d\n",matchCode,teama,teamb,scanDate.d,scanDate.m,scanDate.y);
-            fprintf(nfp,"%-10s %-30s %-30s %2d %2d %2d\n",matchCode,teama,teamb,scanDate.d,scanDate.m,scanDate.y);          
+            printf("%-10s %-30s %-30s %2d/%2d/%2d\n",matchCode,teama,teamb,scanDate.d,scanDate.m,scanDate.y);
+            fprintf(nfp,"%-10s %-30s %-30s %2d/%2d/%2d\n",matchCode,teama,teamb,scanDate.d,scanDate.m,scanDate.y);          
         }    
     }
 
@@ -131,7 +131,7 @@ void matchesFound()
     
     while(!(feof(nfp)))
     {
-        fscanf(nfp,"%s %s %s %d %d %d",matchCode,scanTeama,scanTeamb,&matchDate.d,&matchDate.m,&matchDate.y);
+        fscanf(nfp,"%s %s %s %d/%d/%d",matchCode,scanTeama,scanTeamb,&matchDate.d,&matchDate.m,&matchDate.y);
         if(strcmp(matchCode,scanCode)==0)
         {
             fclose(nfp);
