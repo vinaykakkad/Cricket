@@ -255,7 +255,6 @@ void rules(match *newMatch)
 
 void scoringMain(match *newMatch)
 {
-    int r;
 
     startScoring(newMatch);
     system("cls");
@@ -287,6 +286,16 @@ void scoringMain(match *newMatch)
         printf("\nMATCH TIED!!!\n");
     }
 
+    matchEnd(newMatch);
+}
+void matchEnd(match *newMatch)  
+{
+    int r;
+    int r1;
+    FILE *fp=stdout;
+
+    storeScore(newMatch);
+
     printf("\n********************\n        Press\n\n1 To view Scorecard\n2 To score new match\n3 To view records\n********************\n\n");
     do
     {
@@ -297,9 +306,31 @@ void scoringMain(match *newMatch)
         {
             case 1:
                 system("cls");
-                Scorecard(newMatch);
-                printf("press any key to continue");
-                getch();
+                Scorecard(newMatch,fp);
+                printf("\n********************\n        Press\n\n1 To score new match\n2 To view records\n3 Return to  main page\n********************\n\n");
+                do
+                {
+                    fflush(stdin);
+                    scanf("%d",&r);
+        
+                    switch(r)
+                    {
+                        case 1:
+                            system("cls");
+                            startMatch();
+                            break;
+                        case 2:
+                            system("cls");
+                            viewRecords();
+                            break;
+                        case 3:
+                            start();
+                            break;
+                        default:
+                            printf("You have entered wrong number!!!\nEnter again: ");
+                            break;
+                    }
+                } while (r!=1 && r!=2 && r!=3);
                 break;
             case 2:
                 system("cls");
@@ -317,50 +348,79 @@ void scoringMain(match *newMatch)
     
     
 }
-void Scorecard(match *newMatch)
+
+void storeScore(match *newMatch)
 {
-    printf("***********************************************************\n");
+    FILE *count;
+    FILE *matches;
+    FILE *sc;
+    int x;
+    char mc[10]="";
+
+    count=fopen("count","r");
+    fscanf(count,"%d",&x);
+    fclose(count);
+
+    count=fopen("count","w");
+    fprintf(count,"%d",(x+1));
+    fclose(count);
+
+    itoa((x+1),mc,10);
+    
+    matches=fopen("matches","a");
+    fprintf(matches,"\n%-10s  %-30s   %-30s   %2d/%2d/%2d",mc,(newMatch->battingTeam.name),(newMatch->bowlingTeam.name),(newMatch->match_date.d),(newMatch->match_date.m),(newMatch->match_date.y));
+    fclose(matches);
+
+    sc=fopen(mc,"w");
+    Scorecard(newMatch,sc);
+    fclose(sc);
+
+}
+
+void Scorecard(match *newMatch,FILE *fp)
+{
+    /*printf("***********************************************************\n");
     printf("*************************SCORECARD*************************\n");
     printf("***********************************************************\n");
-    printf("\n**********************************************************\n");
-    printf("%-30s  %3d-%-2d (%2d.%d)\n",newMatch->bowlingTeam.name,newMatch->bowlingTeam.runs,newMatch->bowlingTeam.wickets,(newMatch->bowlingTeam.balls)/6,(newMatch->bowlingTeam.balls)%6);
-    printf("***********************************************************\n");
-    printf("BATSMAN                                       R   B    4s 6s \n\n");
+    */fprintf(fp,"\n**********************************************************\n");
+    fprintf(fp,"%-30s  %3d-%-2d (%2d.%d)\n",newMatch->bowlingTeam.name,newMatch->bowlingTeam.runs,newMatch->bowlingTeam.wickets,(newMatch->bowlingTeam.balls)/6,(newMatch->bowlingTeam.balls)%6);
+    fprintf(fp,"***********************************************************\n");
+    fprintf(fp,"BATSMAN                                       R   B    4s 6s SR\n\n");
     for(int i=0;i<((newMatch->bowlingTeam.wickets)+2);i++)
     {      
         for(int j=0;j<11;j++)
         {
             if((i+1)==(newMatch->bowlingTeam.players[j].inAt))
             {
-                printf("%-30s    %-10s  %-3d %-3d %2d %2d \n",(newMatch->bowlingTeam.players[j].name),(newMatch->bowlingTeam.players[j].outType),(newMatch->bowlingTeam.players[j].batRuns),(newMatch->bowlingTeam.players[j].batBalls),(newMatch->bowlingTeam.players[j].fours),(newMatch->bowlingTeam.players[j].sixes));
+                fprintf(fp,"%-30s    %-10s  %-3d %-3d %2d %2d  %2.2f\n",(newMatch->bowlingTeam.players[j].name),(newMatch->bowlingTeam.players[j].outType),(newMatch->bowlingTeam.players[j].batRuns),(newMatch->bowlingTeam.players[j].batBalls),(newMatch->bowlingTeam.players[j].fours),(newMatch->bowlingTeam.players[j].sixes),((float)(newMatch->bowlingTeam.players[j].batRuns)/(newMatch->bowlingTeam.players[j].batBalls))*100);
                 break;
             }
         }
     }
-    printf("\nDID NOT BAT:\n");
+    fprintf(fp,"\nDID NOT BAT:\n");
     for(int i=0;i<11;i++)
     {
         if((newMatch->bowlingTeam.players[i].inAt)==0)
         {
-            printf("%s\n",(newMatch->bowlingTeam.players[i].name));
+            fprintf(fp,"%-s, ",(newMatch->bowlingTeam.players[i].name));
         }
     }
-    printf("\n***********************************************************\n\n");
-    printf("BOWLER                              O     R  W  E\n");
+    fprintf(fp,"\n\n***********************************************************\n\n");
+    fprintf(fp,"BOWLER                              O     R  W  E  ECO\n");
     for(int i=0;i<11;i++)
     {
         if((newMatch->battingTeam.players[i].overs)!=0)
         {
-            printf("%-30s     %2d.%d %3d %2d %2d\n",(newMatch->battingTeam.players[i].name),(newMatch->battingTeam.players[i].bowlBalls)/6,(newMatch->battingTeam.players[i].bowlBalls)%6,(newMatch->battingTeam.players[i].bowlRuns),(newMatch->battingTeam.players[i].wickets),(newMatch->battingTeam.players[i].extras));
+            fprintf(fp,"%-30s     %2d.%d %3d %2d %2d  %2.2f\n",(newMatch->battingTeam.players[i].name),(newMatch->battingTeam.players[i].bowlBalls)/6,(newMatch->battingTeam.players[i].bowlBalls)%6,(newMatch->battingTeam.players[i].bowlRuns),(newMatch->battingTeam.players[i].wickets),(newMatch->battingTeam.players[i].extras),((float)(newMatch->battingTeam.players[i].bowlRuns)/(newMatch->battingTeam.players[i].bowlBalls))*6);
         }
     }
-    printf("***********************************************************\n");
-    printf("\n***********************************************************\n\n");
+    fprintf(fp,"\n***********************************************************\n");
+    fprintf(fp,"\n***********************************************************\n\n");
 
-    printf("***********************************************************\n");
-    printf("%-30s  %3d-%-2d (%2d.%d)\n",newMatch->battingTeam.name,newMatch->battingTeam.runs,newMatch->battingTeam.wickets,(newMatch->battingTeam.balls)/6,(newMatch->battingTeam.balls)%6);
-    printf("***********************************************************\n");
-    printf("BATSMAN                                       R   B    4s 6s \n");
+    fprintf(fp,"***********************************************************\n");
+    fprintf(fp,"%-30s  %3d-%-2d (%2d.%d)\n",newMatch->battingTeam.name,newMatch->battingTeam.runs,newMatch->battingTeam.wickets,(newMatch->battingTeam.balls)/6,(newMatch->battingTeam.balls)%6);
+    fprintf(fp,"***********************************************************\n");
+    fprintf(fp,"BATSMAN                                       R   B    4s 6s SR\n");
     
     for(int i=0;i<((newMatch->battingTeam.wickets)+2);i++)
     {      
@@ -368,34 +428,34 @@ void Scorecard(match *newMatch)
         {
             if((i+1)==(newMatch->battingTeam.players[j].inAt))
             {
-                printf("%-30s    %-10s  %-3d %-3d %2d %2d \n",(newMatch->battingTeam.players[j].name),(newMatch->battingTeam.players[j].outType),(newMatch->battingTeam.players[j].batRuns),(newMatch->battingTeam.players[j].batBalls),(newMatch->battingTeam.players[j].fours),(newMatch->battingTeam.players[j].sixes));
+                fprintf(fp,"%-30s    %-10s  %-3d %-3d %2d %2d  %2.2f\n",(newMatch->battingTeam.players[j].name),(newMatch->battingTeam.players[j].outType),(newMatch->battingTeam.players[j].batRuns),(newMatch->battingTeam.players[j].batBalls),(newMatch->battingTeam.players[j].fours),(newMatch->battingTeam.players[j].sixes),((float)(newMatch->battingTeam.players[j].batRuns)/(newMatch->battingTeam.players[j].batBalls))*100);
                 break;
             }
         }
     }
-    printf("\nDID NOT BAT:\n");
+    fprintf(fp,"\nDID NOT BAT:\n");
     for(int i=0;i<11;i++)
     {
         if((newMatch->battingTeam.players[i].inAt)==0)
         {
-            printf("%s\n",(newMatch->battingTeam.players[i].name));
+            fprintf(fp,"%-s, ",(newMatch->battingTeam.players[i].name));
         }
     }
     
-    printf("\n***********************************************************\n\n");
+    fprintf(fp,"\n\n***********************************************************\n\n");
 
-    printf("BOWLER                              O     R  W  E\n");
+    fprintf(fp,"BOWLER                              O     R  W  E  ECO\n");
     for(int i=0;i<11;i++)
     {
         if((newMatch->bowlingTeam.players[i].overs)!=0)
         {
-            printf("%-30s     %2d.%d %3d %2d %2d\n",(newMatch->bowlingTeam.players[i].name),(newMatch->bowlingTeam.players[i].bowlBalls)/6,(newMatch->bowlingTeam.players[i].bowlBalls)%6,(newMatch->bowlingTeam.players[i].bowlRuns),(newMatch->bowlingTeam.players[i].wickets),(newMatch->bowlingTeam.players[i].extras));
+            fprintf(fp,"%-30s     %2d.%d %3d %2d %2d  %2.2f\n",(newMatch->bowlingTeam.players[i].name),(newMatch->bowlingTeam.players[i].bowlBalls)/6,(newMatch->bowlingTeam.players[i].bowlBalls)%6,(newMatch->bowlingTeam.players[i].bowlRuns),(newMatch->bowlingTeam.players[i].wickets),(newMatch->bowlingTeam.players[i].extras),((float)(newMatch->bowlingTeam.players[i].bowlRuns)/(newMatch->bowlingTeam.players[i].bowlBalls))*6);
         }
     }
     
-    printf("***********************************************************\n");
-    printf("\n***********************************************************\n");
-    printf("***********************************************************\n\n");
+    fprintf(fp,"\n***********************************************************\n");
+    fprintf(fp,"\n***********************************************************\n");
+    //printf("***********************************************************\n\n");
 }
     
 void startScoring(match *newMatch)
@@ -460,7 +520,7 @@ void innings(match *newMatch)
     }
     else if((newMatch->innings)==2)
     {
-        while(((newMatch->battingTeam.balls)<((newMatch->overs)*6)) && ((newMatch->battingTeam.wickets)<10) && ((newMatch->battingTeam.runs)<(newMatch->bowlingTeam.runs)))
+        while(((newMatch->battingTeam.balls)<((newMatch->overs)*6)) && ((newMatch->battingTeam.wickets)<10) && ((newMatch->battingTeam.runs)<=(newMatch->bowlingTeam.runs)))
         {
             ball(newMatch);
         }
