@@ -83,11 +83,15 @@ void innings(match *);
 
 void ball(match *);
 
-void Scorecard(match *);
+void Scorecard(match *,FILE *);
+
+void matchEnd(match *); 
 
 player* nextBatsman(player *,match *);
 
 player* nextBowler(match *);
 
 void Summary(match *);
+
+void storeScore(match *);
 
